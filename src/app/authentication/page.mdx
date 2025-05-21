@@ -1,41 +1,36 @@
 export const metadata = {
   title: 'Authentication',
   description:
-    'In this guide, we’ll look at how authentication works. Protocol offers two ways to authenticate your API requests: Basic authentication and OAuth2 with a token.',
+    'In this guide, we’ll look at how authentication works. Coba needs a pair of tokens on each request to authenticate your API requests.',
 }
 
 # Authentication
 
-You'll need to authenticate your requests to access any of the endpoints in the Protocol API. In this guide, we'll look at how authentication works. Protocol offers two ways to authenticate your API requests: Basic authentication and OAuth2 with a token — OAuth2 is the recommended way. {{ className: 'lead' }}
+All requests to the Coba API must be authenticated using two credentials: {{ className: 'lead' }}
+an <strong>API Client Key</strong> and an <strong>Access Token.</strong> {{ className: 'lead' }}
 
-## Basic authentication
+These two keys work together to securely identify your application and authorize access to protected resources. {{ className: 'lead' }}
 
-With basic authentication, you use your username and password to authenticate your HTTP requests. Unless you have a very good reason, you probably shouldn't use basic auth. Here's how to authenticate using cURL:
+In this guide, we’ll show you how to include both in your requests and walk through best practices for keeping your credentials secure.
+OAuth2 is not required — Coba uses a streamlined token-based system designed for fast and safe integrations. {{ className: 'lead' }}
 
-```bash {{ title: 'Example request with basic auth' }}
-curl https://api.protocol.chat/v1/conversations \
-  -u username:password
+## How It Works
+
+To authenticate with the Coba API, you must include two headers in **every** request:
+
+- `Authorization`: This is where you pass your **Access Token**.
+- `X-Coba-Metal-API-Key`: This is where you include your **API Client Key**.
+
+These two credentials work together to validate and authorize your request.  
+Both headers are **required** for all endpoints — missing either will result in a `401 Unauthorized` error.
+
+```bash {{ title: 'Example request' }}
+curl https://api.coba.ai/metal/fx\
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "X-Coba-Metal-API-Key: YOUR_API_CLIENT_KEY" \
+  -H "Content-Type: application/json"
 ```
 
-Please don't commit your Protocol password to GitHub!
+Please don't commit your Coba credentials to GitHub!
 
-## OAuth2 with bearer token
-
-The recommended way to authenticate with the Protocol API is by using OAuth2. When establishing a connection using OAuth2, you will need your access token — you will find it in the [Protocol dashboard](#) under API settings. Here's how to add the token to the request header using cURL:
-
-```bash {{ title: 'Example request with bearer token' }}
-curl https://api.protocol.chat/v1/conversations \
-  -H "Authorization: Bearer {token}"
-```
-
-Always keep your token safe and reset it if you suspect it has been compromised.
-
-## Using an SDK
-
-If you use one of our official SDKs, you won't have to worry about any of the above — fetch your access token from the [Protocol dashboard](#) under API settings, and the client library will take care of the rest. All the client libraries use OAuth2 behind the scenes.
-
-<div className="not-prose">
-  <Button href="/sdks" variant="text" arrow="right">
-    <>Check out our list of first-party SDKs</>
-  </Button>
-</div>
+Always keep them safe and if you suspect they have been compromised, contact support immediately. 

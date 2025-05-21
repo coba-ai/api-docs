@@ -1,0 +1,74 @@
+export const metadata = {
+  title: 'Foreign Exchange',
+  description:
+    'Check the current foreign exchange rate between two currencies using the Coba API.',
+}
+
+# Foreign Exchange Rates
+
+This endpoint allows you to retrieve the current foreign exchange (FX) rate between two currencies.  {{ className: 'lead' }}
+By default, it returns the exchange rate from **MXN to USD**, but you can specify any supported currency pair. {{ className: 'lead' }}
+
+## The Foreign Exchange model
+
+The FX model represents the current exchange rate between two currencies.  
+It allows you to retrieve real-time conversion rates—by default, from **MXN to USD**—but it supports any valid currency pair.
+
+The response includes the base currency, the target currency, the exchange rate, and a timestamp indicating when the rate was retrieved.
+
+This model is read-only and is designed for quick access to market rates for pricing, conversions, and transaction calculations.
+
+### Properties
+
+<Properties>
+  <Property name="value" type="string">
+    The exchange rate between the base and target currencies.
+  </Property>
+  <Property name="created_at" type="string">
+    Timestamp of when the exchange rate was retrieved.
+  </Property>
+</Properties>
+
+---
+
+## Get the current foreign exchange {{ tag: 'GET', label: '/fx' }}
+
+<Row>
+  <Col>
+
+    This endpoint allows you to retrieve the current foreign exchange rate between two currencies.
+
+    ### Optional attributes
+
+  <Properties>
+      <Property name="from" type="string">
+        The base currency. Supported values: `MXN`, `USD`, `JPY`, `GBP`, `EUR`, `CAD`.  
+        Defaults to `USD` if not provided.
+      </Property>
+      <Property name="to" type="string">
+        The target currency. Supported values: `MXN`, `USD`, `JPY`, `GBP`, `EUR`, `CAD`.  
+        Defaults to `MXN` if not provided.
+      </Property>
+    </Properties>
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="GET" label="/fx">
+
+    ```bash {{ title: 'cURL' }}
+    curl -G https://sandbox.api.coba.ai/metal/fx\
+      -H "Authorization: Bearer {access_token}" \
+      -H "X-Coba-Metal-API-Key: {client_api_key}" \
+    ```
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+    {
+      "created_at": "2025-05-21T20:10:01.509Z",
+      "value": "19.2230752"
+    }
+    ```
+  </Col>
+</Row>
+
