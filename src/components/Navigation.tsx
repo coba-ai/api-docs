@@ -248,6 +248,7 @@ export const navigation: Array<NavGroup> = [
     title: 'Resources',
     links: [
       { title: 'Foreign Exchange', href: '/foreign_exchange' },
+      { title: 'Transactions', href: '/transactions' }
       // { title: 'Conversations', href: '/conversations' },
       // { title: 'Messages', href: '/messages' },
       // { title: 'Groups', href: '/groups' },

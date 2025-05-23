@@ -1,0 +1,118 @@
+export const metadata = {
+  title: 'Transactions',
+  description:
+    'Create and manage financial transactions using the Coba API',
+}
+
+# Transactions
+
+Transactions are a core part of the Coba API — they represent the movement of funds between accounts, whether for internal transfers or external payouts. On this page, you’ll find everything you need to create and manage transactions programmatically. {{ className: 'lead' }}
+
+## The transaction model
+
+The transaction model contains all the information about a financial transfer initiated through the Coba API. 
+It includes details such as the amount, usd_amount, account_number, account_holder, kind, description, created_at, status, token, provider_transaction_id.
+Transactions can represent internal movements, outbound payments, or FX-converted transfers.
+
+Each transaction is immutable once created, but its status will update as it moves through the processing lifecycle — from pending to completed, declined, or refunded. This model provides a complete snapshot of every transfer your application initiates.
+
+### Properties
+
+<Properties>
+  <Property name="amount" type="string">
+    The original amount of the transaction, in MXN.
+  </Property>
+  <Property name="usd_amount" type="string">
+    The amount in USD equivalent to the original amount.
+  </Property>
+  <Property name="account_number" type="string">
+    The destination account number receiving the funds.
+  </Property>
+  <Property name="account_holder" type="string">
+    The name of the account holder receiving the funds.
+  </Property>
+  <Property name="kind" type="string">
+    The type of transaction. For example, <code>spei</code> for transfers in Mexico.
+  </Property>
+  <Property name="description" type="string">
+    A custom description provided by the client to identify the transaction.
+  </Property>
+  <Property name="created_at" type="timestamp">
+    Timestamp of when the transaction was created with timezone.
+  </Property>
+  <Property name="status" type="string">
+    Current status of the transaction.  
+    One of: <code>pending</code>, <code>complete</code>, <code>refunded</code>, <code>declined</code>.
+  </Property>
+  <Property name="token" type="string">
+    A unique, signed identifier for this transaction. Use this to reference the transaction in client-side or follow-up operations.
+  </Property>
+  <Property name="provider_transaction_id" type="string">
+    An optional ID returned by the underlying provider that executed the transaction.  
+    Useful for reconciliation or support cases.
+  </Property>
+</Properties>
+
+---
+
+## List all transactions {{ tag: 'GET', label: '/transactions' }}
+
+<Row>
+  <Col>
+
+    This endpoint allows you to retrieve a paginated list of all your transactions. By default, a maximum of ten transactions are shown per page.
+
+    ### Optional attributes
+
+    <Properties>
+      <Property name="per_page" type="integer">
+        Limit the number of transactions returned.
+      </Property>
+      <Property name="page" type="string">
+        The page number to retrieve.
+      </Property>
+    </Properties>
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="GET" label="/transactions">
+
+    ```bash {{ title: 'cURL' }}
+    curl -G https://sandbox.api.coba.ai/metal/transactions \
+      -H "Authorization: Bearer {token}" \
+      -H "X-Coba-Metal-API-Key: {client_api_key}" 
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+    {
+      "data": [
+          {
+              "amount": "20.0",
+              "usd_amount": "1.0",
+              "account_number": "000000000000000000",
+              "account_holder": "John Doe",
+              "kind": "spei",
+              "description": "Some description for sandbox",
+              "created_at": "2025-05-23T18:03:52.760Z",
+              "status": "pending",
+              "token": "oIJKrpVKml-BVq8N5JGm6g8VjsrR8sPhvJZRty02-8mmzxtcGuvT6paWqymj-Zoc1R9gL4p6L8vqnJ8XIBFbFw",
+              "provider_transaction_id": null
+          }
+      ],
+      "metadata": {
+          "prev_url": "/metal/transactions?per_page=1&page=",
+          "next_url": "/metal/transactions?per_page=1&page=2",
+          "count": 3,
+          "page": 1,
+          "next": 2
+      }
+    }
+    ```
+
+  </Col>
+</Row>
+
+---
