@@ -116,3 +116,92 @@ Each transaction is immutable once created, but its status will update as it mov
 </Row>
 
 ---
+
+## Create a SPEI {{ tag: 'POST', label: '/transactions' }}
+
+This endpoint allows you to create a SPEI transaction. 
+
+<Row>
+  <Col>
+
+    This endpoint allows you to add a new conversation between you and a contact or group. A contact or group id is required to create a conversation.
+
+    ### Required attributes
+
+    <Properties>
+      <Property name="amount" type="string">
+        Unique identifier for the other contact in the conversation.
+      </Property>
+      <Property name="usd_amount" type="string">
+        Unique identifier for the group that the conversation belongs to.
+      </Property>
+      <Property name="account_number" type="string">
+        Unique identifier for the group that the conversation belongs to.
+      </Property>
+      <Property name="account_holder" type="string">
+        Unique identifier for the group that the conversation belongs to.
+      </Property>
+      <Property name="kind" type="string">
+        Unique identifier for the group that the conversation belongs to.
+      </Property>
+      <Property name="description" type="string">
+        Unique identifier for the group that the conversation belongs to.
+      </Property>
+    </Properties>
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="POST" label="/v1/conversations">
+
+    ```bash {{ title: 'cURL' }}
+    curl https://api.protocol.chat/v1/conversations \
+      -H "Authorization: Bearer {token}" \
+      -d 'contact_id'="WAz8eIbvDR60rouK"
+    ```
+
+    ```js
+    import ApiClient from '@example/protocol-api'
+
+    const client = new ApiClient(token)
+
+    await client.conversations.create({
+      contact_id: 'WAz8eIbvDR60rouK',
+    })
+    ```
+
+    ```python
+    from protocol_api import ApiClient
+
+    client = ApiClient(token)
+
+    client.conversations.create(contact_id="WAz8eIbvDR60rouK")
+    ```
+
+    ```php
+    $client = new \Protocol\ApiClient($token);
+
+    $client->conversations->create([
+      'contact_id' => 'WAz8eIbvDR60rouK',
+    ]);
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+    {
+      "id": "xgQQXg3hrtjh7AvZ",
+      "contact_id": "WAz8eIbvDR60rouK",
+      "group_id": null,
+      "pinned_message_id": null,
+      "is_pinned": false,
+      "is_muted": false,
+      "last_active_at": null,
+      "last_opened_at": null,
+      "created_at": 692233200,
+      "archived_at": null
+    }
+    ```
+
+  </Col>
+</Row>
