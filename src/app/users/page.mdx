@@ -1,0 +1,276 @@
+export const metadata = {
+  title: 'Users',
+  description:
+    'Create and manage users using the Coba API',
+}
+
+# Users
+
+Users are a core part of the Coba API — they represent the individuals or entities that interact with your application. On this page, you’ll find everything you need to create and manage users programmatically. {{ className: 'lead' }}
+
+## The user model
+
+The user model contains all the information about a user registered through the Coba API.
+It includes details such as the name, email, phone number, and status. Users can be individuals or businesses.
+
+Each user is immutable once created, but their status can change based on interactions with your application.
+
+### Properties
+
+  <Properties>
+    <Property name="id" type="string">
+      The unique identifier of the user.
+      Sample: <code>68811830bb6e5d659501e1e8</code>
+    </Property>
+  </Properties>
+
+---
+
+## 1. Create a user {{ tag: 'POST', label: '/users' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to create a new user.
+
+    ### Required attributes
+      <Properties>
+        <Property name="country" type="string">
+          The country of the user.
+          One of: <code>MX</code>, <code>PE</code>
+        </Property>
+        <Property name="email" type="string">
+          The email address of the user.
+        </Property>
+        <Property name="phone_number" type="string">
+          The phone number of the user, including country code.
+          Sample: <code>+528111235654</code>
+        </Property>
+        <Property name="user_type" type="enum<string>">
+          The type of user being created.
+          One of: <code>individual</code> or <code>business</code>.
+        </Property>
+        <Property name="address" type="object">
+          The address of the user.
+          <Property name="address.street1" type="string">
+            The street address of the user.
+          </Property>
+          <Property name="address.city" type="string">
+            The city of the user.
+          </Property>
+          <Property name="address.state" type="string">
+            The state of the user.
+          </Property>
+          <Property name="address.postal_code" type="string">
+            The ZIP code of the user.
+          </Property>
+          <Property name="address.country" type="string">
+            The country of the user.
+          </Property>
+          <Property name="address.street2" type="string">
+            Secondary street address of the user, if applicable.
+          </Property>
+        </Property>
+        <Property name="first_name" type="string">
+          The first name of the user.
+        </Property>
+        <Property name="middle_name" type="string">
+          The middle name of the user.
+        </Property>
+        <Property name="last_name" type="string">
+          The last name of the user.
+        </Property>
+        <Property name="second_last_name" type="string">
+          The second last name of the user.
+        </Property>
+        <Property name="additional_information" type="enum<string>">
+          Additional information about the user, such as their tax ID or business registration number.
+          <Property name="additional_information.tax_id" type="string">
+            The tax ID of the user, if applicable.
+          </Property>
+          <Property name="additional_information.curp" type="string">
+            The CURP of the user, if applicable.
+          </Property>
+        </Property>
+      </Properties>
+  </Col>
+
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="POST" label="/users">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X POST https://sandbox.api.coba.ai/users \
+      -H "Authorization: Bearer {token}" \
+      -H "X-Coba-Metal-API-Key: {client_api_key}" \
+      -d '{
+        "user": {
+            "country": "MX",
+            "first_name": "John",
+            "middle_name": "Michael",
+            "last_name": "Doe",
+            "second_last_name": "Smith",
+            "email": "john.doe@example.com",
+            "phone_number": "+528111235654",
+            "user_type": "individual",
+            "address": {
+                "street1": "123 Main St",
+                "street2": "Apt 4B",
+                "city": "Mexico City",
+                "state": "CDMX",
+                "postal_code": "64000",
+                "country": "MX"
+            },
+            "additional_information": {
+                "rfc": "ACME12345YR2"
+            }
+        }
+    }'
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Successful Response' }}
+    {
+      "id": "68811830bb6e5d659501e1e8"
+    }
+    ```
+
+  </Col>
+</Row>
+
+---
+
+## 2. Add additional information to a user (if necessary) {{ tag: 'POST', label: '/users/:id/additional_information' }}
+
+<Row>
+  <Col>
+    <p>This endpoint allows you to add additional information to an existing user. This is useful for providing more context about the user, such as their tax ID or business registration number.</p>
+    <p>You can call this endpoint after creating a user to provide additional information that may be required for compliance or business purposes.</p>
+    <p>Note: the information you provide won't be overwritten. If you need to update any of the additional information, you may need to added with a different key name</p>
+
+    ### Required attributes
+      <Properties>
+        <Property name="additional_information" type="object">
+          Additional information about the user.
+        </Property>
+      </Properties>
+  </Col>
+
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="POST" label="/users/:id/additional_information">
+
+    ```bash {{ title: 'cURL' }}
+    curl -G https://sandbox.api.coba.ai/metal/users/:id/additional_information \
+      -H "Authorization: Bearer {token}" \
+      -H "X-Coba-Metal-API-Key: {client_api_key}" \
+      -d '{
+        "additional_information": {
+            "rfc": "ACME12345YR2",
+            "curp": "ACME1234567890"
+        }
+      }' 
+    ```
+
+    </CodeGroup>
+
+    ``` {{ title: 'Response' }}
+    Status 204 No Content
+    ```
+  </Col>
+ </Row> 
+
+ ---
+
+## 3. Upload Document {{ tag: 'POST', label: '/users/:id/documents' }}
+
+<Row>
+  <Col>
+    <p>This endpoint allows you to upload a document for an existing user. This is useful for providing more context about the user, such as their tax ID or business registration number.</p>
+    <p>You can call this endpoint as many times as needed to upload different documents for the same user.</p>
+
+    ### Required attributes
+      <Properties>
+        <Property name="document" type="file">
+          The document to upload.
+          Document file (PDF, JPG, PNG, max 10 MB)
+        </Property>
+        <Property name="document_type" type="string">
+          The type of document being uploaded.
+        </Property>
+      </Properties>
+  </Col>
+
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="POST" label="/users/:id/documents">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X POST https://sandbox.api.coba.ai/metal/users/:id/documents \
+      -H "Authorization: Bearer {token}" \
+      -H "X-Coba-Metal-API-Key: {client_api_key}" \
+      -d '{
+        "document_type": "id_card",
+        "document": "base64_encoded_document"
+      }'
+    ```
+
+    </CodeGroup>
+
+    ``` {{ title: 'Response' }}
+    Status 204 No Content
+    ```
+  </Col>
+ </Row> 
+
+ ---
+
+## 4. Accept terms and conditions {{ tag: 'POST', label: '/users/:id/terms/accept' }}
+
+<Row>
+  <Col>
+    <p>This endpoint allows you to accept the terms and conditions for an existing user.</p>
+  </Col>
+
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="POST" label="/users/:id/terms/accept">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X POST https://sandbox.api.coba.ai/metal/users/:id/terms/accept \
+      -H "Authorization: Bearer {token}" \
+      -H "X-Coba-Metal-API-Key: {client_api_key}" 
+    ```
+
+    </CodeGroup>
+
+    ``` {{ title: 'Response' }}
+    Status 204 No Content
+    ```
+  </Col>
+ </Row> 
+
+## 5. Request Review {{ tag: 'POST', label: '/users/:id/review' }}
+
+<Row>
+  <Col>
+    <p>This endpoint allows you to request a review for an existing user.</p>
+  </Col>
+
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="POST" label="/users/:id/review">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X POST https://sandbox.api.coba.ai/metal/users/:id/review \
+      -H "Authorization: Bearer {token}" \
+      -H "X-Coba-Metal-API-Key: {client_api_key}" 
+    ```
+
+    </CodeGroup>
+
+    ``` {{ title: 'Response' }}
+    Status 204 No Content
+    ```
+  </Col>
+ </Row> 
