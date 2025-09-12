@@ -4,4 +4,208 @@ export const metadata = {
     'Send MXN payments programmatically using the Coba API',
 }
 
-# Transactions
+# Send MXN
+
+Sending MXN payments is a key feature of the Coba API, allowing you to programmatically initiate and manage payments in Mexican Pesos. On this page, you’ll find everything you need to send MXN payments through our API using USDC. {{ className: 'lead' }}
+
+In a nutshell, the process involves:
+
+1. **Creating a User**: First, you need to create a user in the Coba through the API.
+2. **Creating a Bank Account**: Next, create a bank account for the user where the MXN payment will be sent.
+3. **Request a Quote**: Obtain a quote for the MXN payment to understand the fees and exchange rates involved.
+4. **Create an Order for the Quote**: This step involves creating an order based on the quote.
+5. **Fund the Order**: Finally, fund the order using USDC to complete the MXN payment.
+
+## 1. Create a user {{ tag: 'POST', label: '/users' }}
+
+Refer to the [Users](./users) section to create a user.
+
+## 2. Create a bank account {{ tag: 'POST', label: '/crypto/bank_accounts' }}
+
+Refer to the [Bank Accounts](./bank_accounts) section to create a bank account.
+
+## 3. Request a quote {{ tag: 'POST', label: '/crypto/quotes' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to request a quote for sending MXN payments.
+
+    ### Required attributes
+
+    <Properties>
+      <Property name="user_id" type="string">
+        The unique identifier of the user who owns the bank account.
+      </Property>
+
+      <Property name="crypto" type="string">
+        The cryptocurrency to be used for the payment (e.g., USDC).
+
+        One of: <code>USDC</code>, 
+                <code>USDC_POLYGON_NXTB</code>, 
+                <code>SOL_USDC_PTHX</code>,
+                <code>USDT_POLYGON</code>,
+                <code>USDT_ERC20</code>,
+                <code>TRX_USDT_S2UZ</code>
+      </Property>
+
+      <Property name="fiat" type="string">
+        MXN
+      </Property>
+
+      <Property name="country" type="string">
+        MX
+      </Property>
+
+      <Property name="amount_fiat" type="number">
+        The amount in fiat currency to be sent. 
+      </Property>
+
+      <Property name="side" type="string">
+        The side of the transaction, in this case <code>sell</code>
+      </Property>
+    </Properties>
+  </Col>
+
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="POST" label="/crypto/quotes">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X POST https://sandbox.api.coba.ai/metal/crypto/quotes \
+      -H "Authorization: Bearer {token}" \
+      -H "X-Coba-Metal-API-Key: {client_api_key}" \
+      -d '{
+          "quote": {
+          "crypto": "USDC_POLYGON_NXTB",
+          "fiat": "MXN",
+          "side": "sell",
+          "country": "MX",
+          "user_id": "210hre129n1209n12",
+          "amount_fiat": 100   
+          }
+      }'
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Successful Response' }}
+      {
+        "id": "893nr89nf8932fnnifn2if",
+        "user_id": "210hre129n1209n12",
+        "crypto": "USDC_POLYGON_NXTB",
+        "fiat": "MXN",
+        "country": "MX",
+        "side": "sell",
+        "amount_fiat": 100,
+        "amount_crypto": 4.5
+      }
+    ```
+  </Col>
+</Row>
+
+4. **Create an order for the quote** {{ tag: 'POST', label: '/crypto/orders' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to create an order based on a previously obtained quote.
+
+    **The quote expires after 10 seconds. This means to create an order, you must have a valid quote within that time frame.**
+
+    ### Required attributes
+
+    <Properties>
+      <Property name="quote_id" type="string">
+        The unique identifier of the user who owns the bank account.
+      </Property>
+      <Property name="payout_bank_account_id" type="string">
+        The unique identifier of the bank account where the MXN payment will be sent.
+      </Property>
+      <Property name="notes" type="string">
+        Optional notes for the order. This is optional
+      </Property>
+    </Properties>
+  </Col>
+
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="POST" label="/crypto/orders">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X POST https://sandbox.api.coba.ai/metal/crypto/orders\
+      -H "Authorization: Bearer {token}" \
+      -H "X-Coba-Metal-API-Key: {client_api_key}" \
+      -d '{
+        "order": {
+            "quote_id": "b9023nf023nf32nf32ndw",
+            "payout_bank_account_id": "68c0592bc5e913h092nc92be",
+            "notes": "testing"
+        }
+      }'
+    ```
+
+    </CodeGroup>
+
+    <CodeGroup>
+    ```json {{ title: 'Successful Response' }}
+      {
+        "id": "893nr89nf8932fnnifn2if",
+      }
+    ```
+    </CodeGroup>
+  </Col>
+</Row>
+
+5. **Fund the order** {{ tag: 'GET', label: '/crypto/orders/:id' }}
+
+<Row>
+  <Col>
+    This endpoint return an order object with instructions to fund the order. 
+    
+    **The status of the order should be <code>awaitingPayment</code> for instructions to be included in the response.**
+
+    You can use the instructions to fund the order using USDC.
+  </Col>
+
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="GET" label="/crypto/orders/:id">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X GET https://sandbox.api.coba.ai/metal/crypto/orders/:id\
+      -H "Authorization: Bearer {token}" \
+      -H "X-Coba-Metal-API-Key: {client_api_key}"
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Successful Response' }}
+      {
+        "id": "893nr89nf8932fnnifn2if",
+        "user_id": "210hre129n1209n12",
+        "quote_id": "b9023nf023nf32nf32ndw",
+        "status": "awaitingPayment",
+        "crypto": "USDC_POLYGON_NXTB",
+        "fiat": "MXN",
+        "country": "MX",
+        "side": "sell",
+        "amount_fiat": 100,
+        "amount_crypto": 4.5,
+        "payment_instructions": {
+          "dueDate": "2024-06-04T15:02:13.097Z",
+          "bankName": "Bank Name",
+          "companyName": "Company Name",
+          "companyAddress": "Company Address",
+          "bankAddress": "Sandbox Bank Address, 12345, Sandbox City, Sandbox Country",
+          "accountNumber": "<string>",
+          "routingNumber": "123456789",
+          "reference": "9f5676",
+          "CLABE": "01212345678901",
+          "RUC": "<string>",
+          "RFC": "RBL123456789",
+          "CCI": "00111233001112345678",
+          "blockchainAddress": "0xAf56edF88c429F1D6858f9E47731FF53F6d34D0C"
+        }
+      }
+    ```
+  </Col>
+</Row>
