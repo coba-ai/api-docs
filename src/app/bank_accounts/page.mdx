@@ -1,0 +1,168 @@
+export const metadata = {
+  title: 'Bank Accounts',
+  description:
+    'Create and manage bank accounts using the Coba API'
+}
+
+# Bank Accounts
+
+Bank accounts are a fundamental component of the Coba API, enabling you to manage and interact with financial accounts programmatically. On this page, you’ll find everything you need to create, retrieve, and manage bank accounts through our API. {{ className: 'lead' }}
+
+## The bank account model
+
+The bank account model contains all the information about a bank account created through the Coba API. 
+It includes details such as the account number, account holder name, bank name, currency, and status. 
+
+Each bank account is uniquely identified by a token, which is used for referencing the account in client-side or follow-up operations.
+
+---
+
+## Create a bank account {{ tag: 'POST', label: '/crypto/bank_accounts' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to create a new bank account.
+
+    ### Required attributes
+    <Properties>
+      <Property name="user_id" type="string">
+        The unique identifier of the user who owns the bank account.
+      </Property>
+      <Property name="country" type="string">
+        The country where the bank account is located.
+      </Property>
+      <Property name="fiat" type="string">
+        The currency of the bank account
+
+        One of: <code>MXN</code>, <code>USD</code>
+      </Property>
+      <Property name="bank_name" type="string">
+        The name of the bank where the account is held.
+      </Property>
+      <Property name="account_holder_name" type="string">
+        The name of the account holder.
+      </Property>
+      <Property name="account_number" type="string">
+        The account number. Only for US bank accounts
+      </Property>
+      <Property name="routing_number" type="string">
+        The routing number for the account. Only for US bank accounts
+      </Property>
+      <Property name="notes" type="string">
+        Any additional notes about the account.
+      </Property>
+      <Property name="CCI" type="string">
+        The CCI (Clave de Cuenta Interbancaria) for the account.
+      </Property>
+      <Property name="CLABE" type="string">
+        The CLABE (Clave Bancaria Estandarizada) for the account.
+      </Property>
+      <Property name="email" type="string">
+        Only necessary if the bank account is NVIO bank account for Bitso transfer.
+      </Property>
+      <Property name="address" type="object">
+        Only required for US bank accounts. Address of the bank account.
+        <div class='pl-8'>
+          <Properties>
+            <Property name="street1" type="string">
+              The first line of the street address.
+            </Property>
+            <Property name="street2" type="string">
+              The second line of the street address (optional).
+            </Property>
+            <Property name="city" type="string">
+              The city of the address.
+            </Property>
+            <Property name="state" type="string">
+              The state or province of the address.
+            </Property>
+            <Property name="postal_code" type="string">
+              The postal code of the address.
+            </Property>
+            <Property name="country" type="string">
+              The country of the address.
+            </Property>
+          </Properties>
+        </div>
+      </Property>
+    </Properties>
+  </Col>
+
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="POST" label="/crypto/bank_accounts">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X POST https://sandbox.api.coba.ai/metal/crypto/bank_accounts \
+      -H "Authorization: Bearer {token}" \
+      -H "X-Coba-Metal-API-Key: {client_api_key}" \
+      -d '{
+        "bank_account": {
+            "user_id": "68811830bb6e5d659501e1e8",
+            "country": "MX",
+            "fiat": "MXN",
+            "bank_name": "Banco Azteca",
+            "account_holder_name": "John Doe",
+            "notes": "My primary bank account",
+            "CLABE": "123456789012345678901"
+        }
+    }'
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Successful Response' }}
+      {
+        "id": "6859b5bd07ef6fefaeaf5604",
+        "user_id": "68408e32b5507b00351ac587",
+        "created_at": "2025-06-23T20:14:53.850Z",
+        "bank_name": "Banamex",
+        "country": "MX",
+        "account_holder_name": "John Wick",
+        "fiat": "MXN",
+        "account_number": null,
+        "clabe": "601180400024542654",
+        "cci": null
+      }
+    ```
+  </Col>
+</Row>
+
+---
+
+## Get a bank account {{ tag: 'GET', label: '/crypto/bank_accounts/{id}' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to retrieve the details of a specific bank account.
+  </Col>
+
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="GET" label="/crypto/bank_accounts/{id}">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X GET https://sandbox.api.coba.ai/metal/crypto/bank_accounts/{id} \
+      -H "Authorization: Bearer {token}" \
+      -H "X-Coba-Metal-API-Key: {client_api_key}"
+    }'
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Successful Response' }}
+      {
+        "id": "6859b5bd07ef6fefaeaf5604",
+        "user_id": "68408e32b5507b00351ac587",
+        "created_at": "2025-06-23T20:14:53.850Z",
+        "bank_name": "Banamex",
+        "country": "MX",
+        "account_holder_name": "John Wick",
+        "fiat": "MXN",
+        "account_number": null,
+        "clabe": "601180400024542654",
+        "cci": null
+      }
+    ```
+  </Col>
+</Row>

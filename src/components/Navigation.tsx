@@ -239,9 +239,7 @@ export const navigation: Array<NavGroup> = [
       { title: 'Introduction', href: '/' },
       { title: 'Quickstart', href: '/quickstart' },
       { title: 'Authentication', href: '/authentication' },
-      // { title: 'Pagination', href: '/pagination' },
       { title: 'Errors', href: '/errors' },
-      // { title: 'Webhooks', href: '/webhooks' },
     ],
   },
   {
@@ -250,9 +248,8 @@ export const navigation: Array<NavGroup> = [
       { title: 'Foreign Exchange', href: '/foreign_exchange' },
       { title: 'Transactions', href: '/transactions' },
       { title: 'Users', href: '/users' },
-      // { title: 'Messages', href: '/messages' },
-      // { title: 'Groups', href: '/groups' },
-      // { title: 'Attachments', href: '/attachments' },
+      { title: 'Bank Accounts', href: '/bank_accounts' },
+      { title: 'Send MXN', href: '/send_mxn' },
     ],
   },
 ]
