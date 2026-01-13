@@ -22,6 +22,10 @@ Each user is immutable once created, but their status can change based on intera
       The unique identifier of the user.
       Sample: <code>68811830bb6e5d659501e1e8</code>
     </Property>
+
+    <Property name="status" type="string">
+      The current onboarding status for the user: <code>['onboarding', 'review', 'approved']</code>
+    </Property>
   </Properties>
 
 ---
@@ -131,7 +135,8 @@ Each user is immutable once created, but their status can change based on intera
 
     ```json {{ title: 'Successful Response' }}
     {
-      "id": "68811830bb6e5d659501e1e8"
+      "id": "68811830bb6e5d659501e1e8",
+      "status": "onboarding"
     }
     ```
 
@@ -191,9 +196,8 @@ Each user is immutable once created, but their status can change based on intera
 
     ### Required attributes
       <Properties>
-        <Property name="document" type="file">
-          The document to upload.
-          Document file (PDF, JPG, PNG, max 10 MB)
+        <Property name="document" type="base64 string">
+          Document to upload in base64, including content type (PDF, JPG, PNG).
         </Property>
         <Property name="document_type" type="string">
           The type of document being uploaded.
@@ -211,7 +215,7 @@ Each user is immutable once created, but their status can change based on intera
       -H "X-Coba-Metal-API-Key: {client_api_key}" \
       -d '{
         "document_type": "id_card",
-        "document": "base64_encoded_document"
+        "document": "data:image/png;base64,iVBORw0KGgoAAAANSUh..."
       }'
     ```
 
@@ -273,4 +277,41 @@ Each user is immutable once created, but their status can change based on intera
     Status 204 No Content
     ```
   </Col>
- </Row> 
+</Row> 
+
+## 6. Get a user {{ tag: 'GET', label: '/users/:id' }}
+<Row>
+  <Col>
+    <p>This endpoint allows you to get an existing user and it's current onboarding status.</p>
+    <Properties>
+      <Property name="id" type="string">
+        The unique identifier of the user.
+        Sample: <code>68811830bb6e5d659501e1e8</code>
+      </Property>
+
+      <Property name="status" type="string">
+        The current onboarding status for the user: <code>['onboarding', 'review', 'approved']</code>
+      </Property>
+    </Properties>
+  </Col>
+
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="POST" label="/users/:id/review">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X GET https://sandbox.api.coba.ai/metal/users/:id \
+      -H "Authorization: Bearer {token}" \
+      -H "X-Coba-Metal-API-Key: {client_api_key}" 
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Successful Response' }}
+    {
+      "id": "68811830bb6e5d659501e1e8",
+      "status": "approved"
+    }
+    ```
+  </Col>
+</Row> 
