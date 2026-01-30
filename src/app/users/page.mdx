@@ -107,7 +107,13 @@ Each user is immutable once created, but their status can change based on intera
             A detailed description of the reason for using the platform, including the nature of the business activities and how the platform will be used.
           </Property>
           <Property name="additional_information.source_of_funds" type="string">
-            A detailed description of the origin and nature of the funds that will be operated through the platform.
+            A description of the origin and nature of the funds that will be operated through the platform.
+
+            For users of type <code>individual</code>, the client application must display the following declaration to the user and require explicit acceptance. Once accepted, the exact text below must be sent as the value of <code>source_of_funds</code>:
+
+            <i>
+            <b>Declaro</b> que el motivo de mi relación comercial con la plataforma es <b>únicamente</b> realizar operaciones de <b>on-ramp y off-ramp de stablecoins</b>. Asimismo, <b>declaro</b> que los fondos que serán operados a través de la plataforma <b>provienen exclusivamente de mi actividad económica lícita</b>, y que <b>yo soy el beneficiario final (UBO)</b> de dichas transacciones y de los recursos involucrados, <b>sin actuar en nombre ni por cuenta de terceros.</b>
+            </i>
           </Property>
         </Property>
       </Properties>
