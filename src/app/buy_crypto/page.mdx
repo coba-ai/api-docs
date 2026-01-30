@@ -1,0 +1,213 @@
+export const metadata = {
+  title: 'Buy Crypto',
+  description:
+    'Buy cryptocurrency programmatically using the Coba API',
+}
+
+# Buy Crypto
+
+Buying cryptocurrency is a key feature of the Coba API, allowing you to programmatically initiate and manage payments. On this page, you’ll find everything you need to buy any cryptocurrency through our API using MXN or USD. {{ className: 'lead' }}
+
+In a nutshell, the process involves:
+
+1. **Creating a User**: First, you need to create a user in the Coba through the API.
+2. **Creating an Address**: Next, create an address for the user's wallet where the cryptocurrency payment will be sent.
+3. **Request a Quote**: Obtain a quote for the crypto payment to understand the fees and exchange rates involved.
+4. **Create an Order for the Quote**: This step involves creating an order based on the quote.
+5. **Fund the Order**: Finally, fund the order using the selected currency (MXN or USD) to complete the MXN payment.
+
+## 1. Create a user {{ tag: 'POST', label: '/users' }}
+
+Refer to the [Users](./users) section to create a user.
+
+## 2. Create an address {{ tag: 'POST', label: '/crypto/addresses' }}
+
+Refer to the [Addresses](./addresses) section to create an address.
+
+## 3. Request a quote {{ tag: 'POST', label: '/crypto/quotes' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to request a quote for sending MXN payments.
+
+    ### Required attributes
+
+    <Properties>
+      <Property name="user_id" type="string">
+        The unique identifier of the user who owns the bank account.
+      </Property>
+
+      <Property name="crypto" type="string">
+        The cryptocurrency you want to buy (e.g., USDC).
+
+        One of: <code>USDC</code>, 
+                <code>USDC_POLYGON_NXTB</code>, 
+                <code>SOL_USDC_PTHX</code>,
+                <code>USDT_POLYGON</code>,
+                <code>USDT_ERC20</code>,
+                <code>TRX_USDT_S2UZ</code>
+      </Property>
+
+      <Property name="fiat" type="string">
+        The currency you will use to fund the payment.
+
+        One of: <code>MXN</code>, 
+                <code>USD</code>
+      </Property>
+
+      <Property name="country" type="string">
+        Country where you want to make the quotation
+
+        One of: <code>MX</code>, 
+                <code>US</code>
+      </Property>
+
+      <Property name="amount_crypto" type="number">
+        The amount in cryptocurrency you want to buy. 
+      </Property>
+
+      <Property name="side" type="string">
+        The side of the transaction, in this case <code>buy</code>
+      </Property>
+    </Properties>
+  </Col>
+
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="POST" label="/crypto/quotes">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X POST https://sandbox.api.coba.ai/metal/crypto/quotes \
+      -H "Authorization: Bearer {token}" \
+      -H "X-Coba-Metal-API-Key: {client_api_key}" \
+      -d '{
+        "quote": {
+          "crypto": "USDC_POLYGON_NXTB",
+          "fiat": "MXN",
+          "side": "buy",
+          "country": "MX",
+          "user_id": "210hre129n1209n12",
+          "amount_crypto": 4.5
+        }
+      }'
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Successful Response' }}
+      {
+        "id": "893nr89nf8932fnnifn2if",
+        "user_id": "210hre129n1209n12",
+        "crypto": "USDC_POLYGON_NXTB",
+        "fiat": "MXN",
+        "country": "MX",
+        "side": "buy",
+        "amount_fiat": 100,
+        "amount_crypto": 4.5
+      }
+    ```
+  </Col>
+</Row>
+
+## 4. **Create an order for the quote** {{ tag: 'POST', label: '/crypto/orders' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to create an order based on a previously obtained quote.
+
+    **The quote expires after 10 seconds. This means to create an order, you must have a valid quote within that time frame.**
+
+    ### Required attributes
+
+    <Properties>
+      <Property name="quote_id" type="string">
+        The unique identifier of the previously generated quote.
+      </Property>
+      <Property name="user_address_id" type="string">
+        The unique identifier of the address where the crypto payment will be sent.
+      </Property>
+      <Property name="notes" type="string">
+        Optional notes for the order. This is optional
+      </Property>
+    </Properties>
+  </Col>
+
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="POST" label="/crypto/orders">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X POST https://sandbox.api.coba.ai/metal/crypto/orders\
+      -H "Authorization: Bearer {token}" \
+      -H "X-Coba-Metal-API-Key: {client_api_key}" \
+      -d '{
+        "order": {
+            "quote_id": "893nr89nf8932fnnifn2if",
+            "user_address_id": "68c0592bc5e913h092nc92be",
+            "notes": "testing"
+        }
+      }'
+    ```
+
+    </CodeGroup>
+
+    <CodeGroup>
+    ```json {{ title: 'Successful Response' }}
+      {
+        "id": "893nr89nf8932fnnifn2if",
+      }
+    ```
+    </CodeGroup>
+  </Col>
+</Row>
+
+## 5. **Fund the order** {{ tag: 'GET', label: '/crypto/orders/:id' }}
+
+<Row>
+  <Col>
+    This endpoint return an order object with instructions to fund the order. 
+    
+    **The status of the order should be <code>awaitingPayment</code> for instructions to be included in the response.**
+
+    You can use the instructions to fund the order using USDC.
+  </Col>
+
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="GET" label="/crypto/orders/:id">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X GET https://sandbox.api.coba.ai/metal/crypto/orders/:id\
+      -H "Authorization: Bearer {token}" \
+      -H "X-Coba-Metal-API-Key: {client_api_key}"
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Successful Response' }}
+      {
+        "quote_id": "893nr89nf8932fnnifn2if",
+        "user_id": "210hre129n1209n12",
+        "status": "awaitingPayment",
+        "crypto": "USDC_POLYGON_NXTB",
+        "destination_of_funds": {
+          "blockchainAddress": "0xaBCb3E5H28B8678c017EFb11FB63ce98HEa83263"
+        },
+        "side": "buy",
+        "fiat": "MXN",
+        "country": "MX",
+        "amount_fiat": 100,
+        "amount_crypto": 4.5,
+        "payment_instructions": {
+            "dueDate": "2026-01-29T22:00:00.000Z",
+            "bankName": "Fondeadora",
+            "companyName": "Rampa Blockchain SAPI de CV",
+            "companyAddress": "Ave. Lázaro Cardenas 2400, Residencial San Agustin 1 Sector, San Pedro Garza Garcia, CP 66260, Mexico",
+            "reference": "9AEA4E84",
+            "CLABE": "699180600005533135",
+            "RFC": "RBL2206107N8"
+        }
+      }
+    ```
+  </Col>
+</Row>
