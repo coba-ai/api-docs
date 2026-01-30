@@ -249,6 +249,7 @@ export const navigation: Array<NavGroup> = [
       { title: 'Transactions', href: '/transactions' },
       { title: 'Users', href: '/users' },
       { title: 'Bank Accounts', href: '/bank_accounts' },
+      { title: 'Addresses', href: '/addresses' },
       { title: 'Send MXN', href: '/send_mxn' },
     ],
   },
