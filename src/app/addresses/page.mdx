@@ -1,0 +1,122 @@
+export const metadata = {
+  title: 'Addresses',
+  description:
+    'Create and manage wallet addresses using the Coba API'
+}
+
+# Addresses
+
+Addresses enable you to manage and interact with crypto wallets programmatically. On this page, you’ll find everything you need to create, retrieve, and manage addresses through our API. {{ className: 'lead' }}
+
+## The address model
+
+The address model represents a blockchain wallet address registered through the Coba API. It includes details such as the wallet address and the associated cryptocurrency.
+
+Each address is uniquely identified by an ID, which is used to reference the address in client-side or follow-up operations.
+
+To create a new address, the user must have a status of <code>approved</code>.
+
+---
+
+## Create an address {{ tag: 'POST', label: '/crypto/addresses' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to register a new wallet address. To successfully create an address, the user must be approved.
+
+    ### Required attributes
+    <Properties>
+      <Property name="user_id" type="string">
+        The unique identifier of the user who owns the wallet.
+      </Property>
+      <Property name="address" type="string">
+        The blockchain address of the wallet.
+      </Property>
+      <Property name="crypto" type="string">
+        The cryptocurrency associated with the address.
+
+        One of: <code>USDC</code>, <code>USDC_POLYGON_NXTB</code>, <code>SOL_USDC_PTHX</code>, <code>XLM_USDC_5F3T</code>, <code>USDT_POLYGON</code>, <code>USDT_ERC20</code>, <code>TRX_USDT_S2UZ</code>
+      </Property>
+    </Properties>
+
+    ### Optional attributes
+    <Properties>
+      <Property name="label" type="string">
+        A human-readable label to help identify the address.
+      </Property>
+    </Properties>
+  </Col>
+
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="POST" label="/crypto/addresses">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X POST https://sandbox.api.coba.ai/metal/crypto/addresses \
+      -H "Authorization: Bearer {token}" \
+      -H "X-Coba-Metal-API-Key: {client_api_key}" \
+      -d '{
+        "address": {
+            "user_id": "68811830bb6e5d659501e1e8",
+            "address": "0xaBCb3E5H28B8678c017EFb11FB63ce98HEa83263",
+            "crypto": "USDC_POLYGON_NXTB",
+            "label": "John's wallet"
+        }
+    }'
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Successful Response' }}
+      {
+        "id": "697cd4424af1f1f07de8e7a4",
+        "advanced_verification_status": null,
+        "address": "0xaBCb3E5H28B8678c017EFb11FB63ce98HEa83263",
+        "crypto": "USDC_POLYGON_NXTB",
+        "created_at": "2025-06-23T20:14:53.850Z",
+        "user_id": "68811830bb6e5d659501e1e8",
+        "approved": true,
+        "last_checked": "2025-06-23T20:14:53.850Z",
+        "label": "John's wallet",
+      }
+    ```
+  </Col>
+</Row>
+
+---
+
+## Get an address {{ tag: 'GET', label: '/crypto/addresses/{id}' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to retrieve the details of a specific wallet address.
+  </Col>
+
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="GET" label="/crypto/addresses/{id}">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X GET https://sandbox.api.coba.ai/metal/crypto/addresses/{id} \
+      -H "Authorization: Bearer {token}" \
+      -H "X-Coba-Metal-API-Key: {client_api_key}"
+    }'
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Successful Response' }}
+      {
+        "id": "697cd4424af1f1f07de8e7a4",
+        "advanced_verification_status": null,
+        "address": "0xaBCb3E5H28B8678c017EFb11FB63ce98HEa83263",
+        "crypto": "USDC_POLYGON_NXTB",
+        "created_at": "2025-06-23T20:14:53.850Z",
+        "user_id": "68811830bb6e5d659501e1e8",
+        "approved": true,
+        "last_checked": "2025-06-23T20:14:53.850Z",
+        "label": "John's wallet",
+      }
+    ```
+  </Col>
+</Row>
